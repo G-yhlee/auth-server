@@ -36,6 +36,7 @@ npm run dist
 ## OAuth 설정
 
 ### 환경 변수 설정
+
 `.env` 파일을 생성하고 다음 변수들을 설정하세요:
 
 ```env
@@ -53,35 +54,42 @@ PORT=3333
 ### OAuth Provider 설정
 
 #### Google OAuth 설정
+
 1. [Google Cloud Console](https://console.cloud.google.com/)에 접속
 2. 새 프로젝트 생성 또는 기존 프로젝트 선택
 3. OAuth 2.0 클라이언트 ID 생성
-4. 승인된 리디렉션 URI에 `http://localhost:3333/api/auth/callback/google` 추가
+4. 승인된 리디렉션 URI에 `http://localhost:3333/auth/callback/google` 추가
 
 #### GitHub OAuth 설정
+
 1. [GitHub Developer Settings](https://github.com/settings/developers)에 접속
 2. 새 OAuth App 생성
-3. Authorization callback URL에 `http://localhost:3333/api/auth/callback/github` 입력
+3. Authorization callback URL에 `http://localhost:3333/auth/callback/github` 입력
 
 ### 사용 방법
 
 #### 로그인 엔드포인트
-- Google 로그인: `POST /api/auth/sign-in/social/google`
-- GitHub 로그인: `POST /api/auth/sign-in/social/github`
-- Anonymous 로그인: `POST /api/auth/sign-in/anonymous`
+
+- Google 로그인: `POST /auth/sign-in/social/google`
+- GitHub 로그인: `POST /auth/sign-in/social/github`
+- Anonymous 로그인: `POST /auth/sign-in/anonymous`
 
 #### 사용 예시
+
 ```javascript
 // Google 로그인
-const response = await fetch('http://localhost:3333/api/auth/sign-in/social/google', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
-    callbackURL: '/dashboard'
-  })
-});
+const response = await fetch(
+  "http://localhost:3333/auth/sign-in/social/google",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      callbackURL: "/dashboard",
+    }),
+  }
+);
 
 const data = await response.json();
 window.location.href = data.url;

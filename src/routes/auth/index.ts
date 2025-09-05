@@ -4,6 +4,6 @@ import { toNodeHandler } from "better-auth/node";
 
 const authRouter = Router();
 
-authRouter.all("/auth/*", toNodeHandler(auth));
+authRouter.all("/*", toNodeHandler(auth));
 
 export default authRouter;

@@ -3,14 +3,19 @@
 ## Anonymous Login
 
 ### Sign In
+
 ```
-POST /api/auth/sign-in/anonymous
+POST /auth/sign-in/anonymous
 ```
+
 **Request:**
+
 ```json
 {}
 ```
+
 **Response:**
+
 ```json
 {
   "token": "sK6WZb38FYuRz1iH3EYEjeg2UxL9ypAY",
@@ -25,16 +30,21 @@ POST /api/auth/sign-in/anonymous
 ## OAuth Login
 
 ### Google OAuth
+
 ```
-POST /api/auth/sign-in/social/google
+POST /auth/sign-in/social/google
 ```
+
 **Request:**
+
 ```json
 {
   "callbackURL": "/dashboard"
 }
 ```
+
 **Response:**
+
 ```json
 {
   "url": "https://accounts.google.com/oauth/authorize?..."
@@ -42,16 +52,21 @@ POST /api/auth/sign-in/social/google
 ```
 
 ### GitHub OAuth
+
 ```
-POST /api/auth/sign-in/social/github
+POST /auth/sign-in/social/github
 ```
+
 **Request:**
+
 ```json
 {
   "callbackURL": "/dashboard"
 }
 ```
+
 **Response:**
+
 ```json
 {
   "url": "https://github.com/login/oauth/authorize?..."
@@ -59,20 +74,25 @@ POST /api/auth/sign-in/social/github
 ```
 
 ### OAuth Callbacks
+
 ```
-GET /api/auth/callback/google?code=xxx&state=xxx
-GET /api/auth/callback/github?code=xxx&state=xxx
+GET /auth/callback/google?code=xxx&state=xxx
+GET /auth/callback/github?code=xxx&state=xxx
 ```
+
 **Response:** Redirect to callbackURL with cookie set
 
 ## Session Management
 
 ### Get Session
+
 ```
-GET /api/auth/get-session
+GET /auth/get-session
 Authorization: Bearer {token}
 ```
+
 **Response:**
+
 ```json
 {
   "user": {
@@ -89,15 +109,20 @@ Authorization: Bearer {token}
 ```
 
 ### Sign Out
+
 ```
-POST /api/auth/sign-out
+POST /auth/sign-out
 Authorization: Bearer {token}
 ```
+
 **Request:**
+
 ```json
 {}
 ```
+
 **Response:**
+
 ```json
 {
   "success": true
@@ -107,10 +132,13 @@ Authorization: Bearer {token}
 ## User Management
 
 ### Find All Users
+
 ```
 GET /api/infoUsers
 ```
+
 **Response:**
+
 ```json
 [
   {
@@ -122,17 +150,22 @@ GET /api/infoUsers
 ```
 
 ### Create User
+
 ```
 POST /api/infoUsers
 ```
+
 **Request:**
+
 ```json
 {
   "email": "user@example.com",
   "name": "User Name"
 }
 ```
+
 **Response:**
+
 ```json
 {
   "id": 1,
@@ -142,16 +175,21 @@ POST /api/infoUsers
 ```
 
 ### Update User
+
 ```
 PUT /api/infoUsers/:id
 ```
+
 **Request:**
+
 ```json
 {
   "name": "Updated Name"
 }
 ```
+
 **Response:**
+
 ```json
 {
   "id": 1,
@@ -161,10 +199,13 @@ PUT /api/infoUsers/:id
 ```
 
 ### Delete User
+
 ```
 DELETE /api/infoUsers/:id
 ```
+
 **Response:**
+
 ```json
 {
   "success": true

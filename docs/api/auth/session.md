@@ -7,17 +7,20 @@
 현재 세션 정보를 조회합니다.
 
 **Endpoint:**
+
 ```
-GET http://localhost:3333/api/auth/get-session
+GET http://localhost:3333/auth/get-session
 ```
 
 **Headers:**
+
 ```
 Content-Type: application/json
 Authorization: Bearer {token}
 ```
 
 **Response:**
+
 ```json
 {
   "user": {
@@ -41,22 +44,26 @@ Authorization: Bearer {token}
 현재 세션을 종료합니다.
 
 **Endpoint:**
+
 ```
-POST http://localhost:3333/api/auth/sign-out
+POST http://localhost:3333/auth/sign-out
 ```
 
 **Headers:**
+
 ```
 Content-Type: application/json
 Authorization: Bearer {token}
 ```
 
 **Request Body:**
+
 ```json
 {}
 ```
 
 **Response:**
+
 ```json
 {
   "success": true
@@ -75,34 +82,36 @@ Authorization: Bearer {token}
 ### JavaScript/Fetch
 
 #### 세션 조회
+
 ```javascript
-const response = await fetch('http://localhost:3333/api/auth/get-session', {
-  method: 'GET',
+const response = await fetch("http://localhost:3333/auth/get-session", {
+  method: "GET",
   headers: {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
-  }
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  },
 });
 
 const sessionData = await response.json();
-console.log('Current user:', sessionData.user);
-console.log('Session info:', sessionData.session);
+console.log("Current user:", sessionData.user);
+console.log("Session info:", sessionData.session);
 ```
 
 #### 로그아웃
+
 ```javascript
-const response = await fetch('http://localhost:3333/api/auth/sign-out', {
-  method: 'POST',
+const response = await fetch("http://localhost:3333/auth/sign-out", {
+  method: "POST",
   headers: {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
   },
-  body: JSON.stringify({})
+  body: JSON.stringify({}),
 });
 
 const result = await response.json();
 if (result.success) {
-  console.log('Successfully signed out');
+  console.log("Successfully signed out");
   // 토큰 삭제 및 로그인 페이지로 리디렉션
 }
 ```
@@ -110,15 +119,17 @@ if (result.success) {
 ### cURL
 
 #### 세션 조회
+
 ```bash
-curl -X GET http://localhost:3333/api/auth/get-session \
+curl -X GET http://localhost:3333/auth/get-session \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_TOKEN_HERE"
 ```
 
 #### 로그아웃
+
 ```bash
-curl -X POST http://localhost:3333/api/auth/sign-out \
+curl -X POST http://localhost:3333/auth/sign-out \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_TOKEN_HERE" \
   -d "{}"
@@ -127,7 +138,9 @@ curl -X POST http://localhost:3333/api/auth/sign-out \
 ## 에러 응답
 
 ### 401 Unauthorized
+
 토큰이 없거나 유효하지 않은 경우:
+
 ```json
 {
   "error": "Unauthorized",
@@ -136,7 +149,9 @@ curl -X POST http://localhost:3333/api/auth/sign-out \
 ```
 
 ### 403 Forbidden
+
 토큰은 유효하지만 권한이 없는 경우:
+
 ```json
 {
   "error": "Forbidden",

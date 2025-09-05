@@ -9,16 +9,19 @@ OAuth를 통해 외부 서비스(Google, GitHub) 계정으로 로그인합니다
 Google 계정으로 로그인 프로세스를 시작합니다.
 
 **Endpoint:**
+
 ```
-POST http://localhost:3333/api/auth/sign-in/social/google
+POST http://localhost:3333/auth/sign-in/social/google
 ```
 
 **Headers:**
+
 ```
 Content-Type: application/json
 ```
 
 **Request Body:**
+
 ```json
 {
   "callbackURL": "/dashboard"
@@ -26,9 +29,10 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```json
 {
-  "url": "https://accounts.google.com/oauth/authorize?response_type=code&client_id=xxx&redirect_uri=http%3A//localhost%3A3333/api/auth/callback/google&scope=openid%20profile%20email&state=xxx"
+  "url": "https://accounts.google.com/oauth/authorize?response_type=code&client_id=xxx&redirect_uri=http%3A//localhost%3A3333/auth/callback/google&scope=openid%20profile%20email&state=xxx"
 }
 ```
 
@@ -37,8 +41,9 @@ Content-Type: application/json
 OAuth 제공자에서 리디렉션되는 콜백 엔드포인트입니다.
 
 **Endpoint:**
+
 ```
-GET http://localhost:3333/api/auth/callback/google?code=xxx&state=xxx
+GET http://localhost:3333/auth/callback/google?code=xxx&state=xxx
 ```
 
 **Response:**
@@ -51,16 +56,19 @@ GET http://localhost:3333/api/auth/callback/google?code=xxx&state=xxx
 GitHub 계정으로 로그인 프로세스를 시작합니다.
 
 **Endpoint:**
+
 ```
-POST http://localhost:3333/api/auth/sign-in/social/github
+POST http://localhost:3333/auth/sign-in/social/github
 ```
 
 **Headers:**
+
 ```
 Content-Type: application/json
 ```
 
 **Request Body:**
+
 ```json
 {
   "callbackURL": "/dashboard"
@@ -68,17 +76,19 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```json
 {
-  "url": "https://github.com/login/oauth/authorize?response_type=code&client_id=xxx&redirect_uri=http%3A//localhost%3A3333/api/auth/callback/github&scope=user%3Aemail&state=xxx"
+  "url": "https://github.com/login/oauth/authorize?response_type=code&client_id=xxx&redirect_uri=http%3A//localhost%3A3333/auth/callback/github&scope=user%3Aemail&state=xxx"
 }
 ```
 
 ### GitHub OAuth 콜백
 
 **Endpoint:**
+
 ```
-GET http://localhost:3333/api/auth/callback/github?code=xxx&state=xxx
+GET http://localhost:3333/auth/callback/github?code=xxx&state=xxx
 ```
 
 **Response:**
@@ -87,9 +97,10 @@ GET http://localhost:3333/api/auth/callback/github?code=xxx&state=xxx
 ## OAuth 설정 요구사항
 
 ### Google OAuth 설정
+
 1. [Google Cloud Console](https://console.cloud.google.com/)에서 프로젝트 생성
 2. OAuth 2.0 클라이언트 ID 생성
-3. 승인된 리디렉션 URI에 `http://localhost:3333/api/auth/callback/google` 추가
+3. 승인된 리디렉션 URI에 `http://localhost:3333/auth/callback/google` 추가
 4. 환경 변수 설정:
    ```env
    GOOGLE_CLIENT_ID=your_google_client_id
@@ -97,8 +108,9 @@ GET http://localhost:3333/api/auth/callback/github?code=xxx&state=xxx
    ```
 
 ### GitHub OAuth 설정
+
 1. [GitHub Developer Settings](https://github.com/settings/developers)에서 OAuth App 생성
-2. Authorization callback URL에 `http://localhost:3333/api/auth/callback/github` 입력
+2. Authorization callback URL에 `http://localhost:3333/auth/callback/github` 입력
 3. 환경 변수 설정:
    ```env
    GITHUB_CLIENT_ID=your_github_client_id
@@ -115,17 +127,21 @@ GET http://localhost:3333/api/auth/callback/github?code=xxx&state=xxx
 ## 사용 예시
 
 ### JavaScript/Fetch
+
 ```javascript
 // Google OAuth 시작
-const response = await fetch('http://localhost:3333/api/auth/sign-in/social/google', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
-    callbackURL: '/dashboard'
-  })
-});
+const response = await fetch(
+  "http://localhost:3333/auth/sign-in/social/google",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      callbackURL: "/dashboard",
+    }),
+  }
+);
 
 const data = await response.json();
 // 브라우저를 OAuth URL로 리디렉션
@@ -133,14 +149,15 @@ window.location.href = data.url;
 ```
 
 ### cURL
+
 ```bash
 # Google OAuth URL 받기
-curl -X POST http://localhost:3333/api/auth/sign-in/social/google \
+curl -X POST http://localhost:3333/auth/sign-in/social/google \
   -H "Content-Type: application/json" \
   -d '{"callbackURL": "/dashboard"}'
 
 # GitHub OAuth URL 받기
-curl -X POST http://localhost:3333/api/auth/sign-in/social/github \
+curl -X POST http://localhost:3333/auth/sign-in/social/github \
   -H "Content-Type: application/json" \
   -d '{"callbackURL": "/dashboard"}'
 ```

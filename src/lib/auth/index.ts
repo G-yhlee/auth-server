@@ -4,6 +4,7 @@ import Database from "better-sqlite3";
 
 export const auth = betterAuth({
   database: new Database("./auth.db"),
+  basePath: "/auth",
   emailAndPassword: {
     enabled: false,
   },
@@ -17,8 +18,11 @@ export const auth = betterAuth({
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
     },
   },
-  plugins: [
-    anonymous(),
+  plugins: [anonymous()],
+  trustedOrigins: [
+    "http://localhost:3333",
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "http://localhost:3002",
   ],
-  trustedOrigins: ["http://localhost:3333"],
 });

@@ -7,21 +7,25 @@
 익명 로그인을 통해 임시 사용자를 생성합니다.
 
 **Endpoint:**
+
 ```
-POST http://localhost:3333/api/auth/sign-in/anonymous
+POST http://localhost:3333/auth/sign-in/anonymous
 ```
 
 **Headers:**
+
 ```
 Content-Type: application/json
 ```
 
 **Request Body:**
+
 ```json
 {}
 ```
 
 **Response:**
+
 ```json
 {
   "token": "sK6WZb38FYuRz1iH3EYEjeg2UxL9ypAY",
@@ -46,23 +50,25 @@ Content-Type: application/json
 ## 사용 예시
 
 ### JavaScript/Fetch
+
 ```javascript
-const response = await fetch('http://localhost:3333/api/auth/sign-in/anonymous', {
-  method: 'POST',
+const response = await fetch("http://localhost:3333/auth/sign-in/anonymous", {
+  method: "POST",
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
-  body: JSON.stringify({})
+  body: JSON.stringify({}),
 });
 
 const data = await response.json();
-console.log('Anonymous user created:', data.user);
-console.log('Token:', data.token);
+console.log("Anonymous user created:", data.user);
+console.log("Token:", data.token);
 ```
 
 ### cURL
+
 ```bash
-curl -X POST http://localhost:3333/api/auth/sign-in/anonymous \
+curl -X POST http://localhost:3333/auth/sign-in/anonymous \
   -H "Content-Type: application/json" \
   -d "{}"
 ```
