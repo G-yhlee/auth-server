@@ -18,7 +18,6 @@ const infoUsersRouter = pipe(
   router,
   infoUsers.findAll,
   infoUsers.create,
-  infoUsers.destroyAll,
   infoUsers.destroy,
   infoUsers.createAll,
   infoUsers.update

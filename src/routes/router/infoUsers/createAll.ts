@@ -4,7 +4,7 @@ import orm from "../../../lib/orm";
 
 export const createAll = (router: Router) => {
   router.route("/infoUsers/createAll").post(async (req, res) => {
-    // const data = await orm.common.dao.infoMap.createAll(
+    // const data = await orm.common.dao.infoUsers.createAll(
     //   req.body.length ? req.body : dao.infoGps
     // );
 
