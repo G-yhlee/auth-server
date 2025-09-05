@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "es2016",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "outDir": "dist",
+    "typeRoots": ["src/types"] // https://velog.io/@mero/typescript-express%EC%97%90%EC%84%9C-ts-node%EB%A1%9C-%EC%8B%A4%ED%96%89-%EC%8B%9C-global-type-%EB%AA%BB-%EC%B0%BE%EB%8A%94-%EC%97%90%EB%9F%AC
+    /* Skip type checking all .d.ts files. */
+  },
+  "ts-node": {
+    "files": true
+  }
+  // "include": [".types/global.d.ts"],
+  // "exclude": [],
+}
