@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth";
-import { anonymous } from "better-auth/plugins";
+import { anonymous, emailOTP } from "better-auth/plugins";
 import Database from "better-sqlite3";
+import emailService from "../email";
 
 export const auth = betterAuth({
   database: new Database("./auth.db"),
@@ -18,7 +19,34 @@ export const auth = betterAuth({
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
     },
   },
-  plugins: [anonymous()],
+  plugins: [
+    anonymous(),
+    emailOTP({
+      async sendVerificationOTP({ email, otp, type }) {
+        try {
+          console.log(`[OTP] Sending ${type} OTP to ${email}: ${otp}`);
+          
+          // 실제 이메일 전송
+          const success = await emailService.sendOTPEmail({
+            email,
+            otp,
+            type: type as 'sign-in' | 'email-verification' | 'password-reset'
+          });
+
+          if (success) {
+            console.log(`[OTP] ✅ Email sent successfully to ${email}`);
+          } else {
+            console.error(`[OTP] ❌ Failed to send email to ${email}`);
+          }
+        } catch (error) {
+          console.error(`[OTP] ❌ Error sending email to ${email}:`, error);
+        }
+      },
+      otpLength: 6,
+      expiresIn: 300, // 5분
+      allowedAttempts: 3,
+    }),
+  ],
   trustedOrigins: [
     "http://localhost:3333",
     "http://localhost:3000",
