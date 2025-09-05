@@ -1,5 +1,6 @@
 import { Router, Request, Response } from "express";
 import Database from "better-sqlite3";
+import UserService from "../../lib/user";
 
 const usersRouter = Router();
 const db = new Database("./auth.db");
@@ -58,24 +59,103 @@ usersRouter.get("/users/oauth", (req: Request, res: Response) => {
 // Get user statistics
 usersRouter.get("/users/stats", (req: Request, res: Response) => {
   try {
-    const totalUsers = db.prepare("SELECT COUNT(*) as count FROM user").get() as { count: number };
-    const anonymousUsers = db.prepare("SELECT COUNT(*) as count FROM user WHERE isAnonymous = 1").get() as { count: number };
-    const oauthUsers = db.prepare("SELECT COUNT(*) as count FROM user WHERE isAnonymous = 0 OR isAnonymous IS NULL").get() as { count: number };
-    const verifiedUsers = db.prepare("SELECT COUNT(*) as count FROM user WHERE emailVerified = 1").get() as { count: number };
+    const stats = UserService.getUserStats();
     
     res.json({
       success: true,
-      data: {
-        total: totalUsers.count,
-        anonymous: anonymousUsers.count,
-        oauth: oauthUsers.count,
-        verified: verifiedUsers.count
-      }
+      data: stats
     });
   } catch (error) {
     res.status(500).json({
       success: false,
       error: "Failed to fetch user statistics"
+    });
+  }
+});
+
+// Get validated users only
+usersRouter.get("/users/validated", (req: Request, res: Response) => {
+  try {
+    const validatedUsers = UserService.getValidatedUsers();
+    res.json({
+      success: true,
+      data: validatedUsers,
+      count: validatedUsers.length
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to fetch validated users"
+    });
+  }
+});
+
+// Check user validation status by email
+usersRouter.get("/users/validation-status/:email", (req: Request, res: Response) => {
+  try {
+    const { email } = req.params;
+    const user = UserService.findByEmail(email);
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: "User not found"
+      });
+    }
+    
+    res.json({
+      success: true,
+      data: {
+        email: user.email,
+        isValid: user.isValid,
+        emailVerified: user.emailVerified,
+        userId: user.id,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to check validation status"
+    });
+  }
+});
+
+// Manually validate a user (admin function)
+usersRouter.post("/users/validate", (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+    
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        error: "Email is required"
+      });
+    }
+    
+    const validatedUser = UserService.markAsValidated(email);
+    
+    if (validatedUser) {
+      res.json({
+        success: true,
+        message: "User validated successfully",
+        data: {
+          email: validatedUser.email,
+          isValid: validatedUser.isValid,
+          userId: validatedUser.id
+        }
+      });
+    } else {
+      res.status(404).json({
+        success: false,
+        error: "User not found or validation failed"
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Failed to validate user"
     });
   }
 });

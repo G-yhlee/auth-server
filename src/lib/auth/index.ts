@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth";
 import { anonymous, emailOTP } from "better-auth/plugins";
 import Database from "better-sqlite3";
 import emailService from "../email";
+import UserService from "../user";
 
 export const auth = betterAuth({
   database: new Database("./auth.db"),
@@ -25,6 +26,9 @@ export const auth = betterAuth({
       async sendVerificationOTP({ email, otp, type }) {
         try {
           console.log(`[OTP] Sending ${type} OTP to ${email}: ${otp}`);
+          
+          // OTP 전송 시 사용자 준비 (isValid = false로 리셋)
+          UserService.createOrUpdateForOTP(email);
           
           // 실제 이메일 전송
           const success = await emailService.sendOTPEmail({

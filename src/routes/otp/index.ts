@@ -1,5 +1,7 @@
 import { Router, Request, Response } from "express";
 import Database from "better-sqlite3";
+import UserService from "../../lib/user";
+import emailService from "../../lib/email";
 
 const otpRouter = Router();
 const db = new Database("./auth.db");
@@ -16,14 +18,40 @@ otpRouter.post("/otp/send", async (req: Request, res: Response) => {
       });
     }
 
-    // Better Auth의 emailOTP 플러그인이 자동으로 처리
-    // 실제 OTP 전송은 auth 설정의 sendVerificationOTP에서 처리됨
+    // 사용자 생성 또는 업데이트 (OTP 전송 시 isValid = false로 리셋)
+    const user = UserService.createOrUpdateForOTP(email);
+    console.log(`[OTP] Prepared user for OTP: ${email} (ID: ${user.id})`);
+
+    // OTP 생성 및 저장
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000).toISOString(); // 5분 후 만료
+
+    // verification 테이블에 OTP 저장
+    const verificationId = `verification_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    db.prepare(`
+      INSERT INTO verification (id, identifier, value, expiresAt, createdAt) 
+      VALUES (?, ?, ?, ?, datetime('now'))
+    `).run(verificationId, email, otp, expiresAt);
+
+    // 실제 이메일 전송
+    const emailSent = await emailService.sendOTPEmail({
+      email,
+      otp,
+      type: 'email-verification'
+    });
+
+    if (!emailSent) {
+      console.error(`[OTP] Failed to send email to ${email}`);
+    } else {
+      console.log(`[OTP] ✅ Email sent successfully to ${email} with OTP: ${otp}`);
+    }
     
     res.json({
       success: true,
       message: "OTP sent successfully",
       data: {
         email,
+        userId: user.id,
         expiresIn: 300 // 5분
       }
     });
@@ -64,12 +92,21 @@ otpRouter.post("/otp/verify", async (req: Request, res: Response) => {
     // OTP 검증 성공 시 verification 레코드 삭제
     db.prepare("DELETE FROM verification WHERE id = ?").run(verification.id);
 
+    // 🎉 사용자를 검증된 상태로 업데이트
+    const validatedUser = UserService.markAsValidated(email);
+    
+    if (validatedUser) {
+      console.log(`[OTP] 🎉 User ${email} has been validated successfully!`);
+    }
+
     res.json({
       success: true,
       message: "OTP verified successfully",
       data: {
         email,
-        verifiedAt: new Date().toISOString()
+        verifiedAt: new Date().toISOString(),
+        isValid: validatedUser?.isValid || false,
+        userId: validatedUser?.id
       }
     });
   } catch (error) {
