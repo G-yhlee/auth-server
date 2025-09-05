@@ -29,6 +29,8 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/api", router.infoUsersRouter);
 app.use("/api", router.infoNewsRouter);
+app.use("/api", router.authRouter);
+app.use("/api", router.usersRouter);
 
 server.listen(port, () => {
   console.info(`listen at ${port}`);
