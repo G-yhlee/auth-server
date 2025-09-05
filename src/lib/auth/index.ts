@@ -20,6 +20,15 @@ export const auth = betterAuth({
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
     },
   },
+  user: {
+    additionalFields: {
+      isValid: {
+        type: "boolean",
+        defaultValue: false,
+        input: false, // 사용자가 직접 입력할 수 없음
+      },
+    },
+  },
   plugins: [
     anonymous(),
     emailOTP({

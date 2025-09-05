@@ -94,7 +94,9 @@ usersRouter.get("/users/validated", (req: Request, res: Response) => {
 usersRouter.get("/users/validation-status/:email", (req: Request, res: Response) => {
   try {
     const { email } = req.params;
-    const user = UserService.findByEmail(email);
+    
+    // Better Auth 사용자 테이블에서 직접 조회
+    const user = db.prepare("SELECT * FROM user WHERE email = ?").get(email) as any;
     
     if (!user) {
       return res.status(404).json({
@@ -103,11 +105,13 @@ usersRouter.get("/users/validation-status/:email", (req: Request, res: Response)
       });
     }
     
+    console.log(`[ValidationStatus] User ${email}: isValid=${user.isValid}`);
+    
     res.json({
       success: true,
       data: {
         email: user.email,
-        isValid: user.isValid,
+        isValid: Boolean(user.isValid),
         emailVerified: user.emailVerified,
         userId: user.id,
         createdAt: user.createdAt,
@@ -115,6 +119,7 @@ usersRouter.get("/users/validation-status/:email", (req: Request, res: Response)
       }
     });
   } catch (error) {
+    console.error('[ValidationStatus] Error:', error);
     res.status(500).json({
       success: false,
       error: "Failed to check validation status"

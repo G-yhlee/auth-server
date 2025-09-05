@@ -92,11 +92,23 @@ otpRouter.post("/otp/verify", async (req: Request, res: Response) => {
     // OTP 검증 성공 시 verification 레코드 삭제
     db.prepare("DELETE FROM verification WHERE id = ?").run(verification.id);
 
-    // 🎉 사용자를 검증된 상태로 업데이트
+    // 🎉 사용자를 검증된 상태로 업데이트 (Better Auth 사용자 테이블에서도 업데이트)
     const validatedUser = UserService.markAsValidated(email);
     
     if (validatedUser) {
       console.log(`[OTP] 🎉 User ${email} has been validated successfully!`);
+      
+      // Better Auth 사용자 테이블에서도 isValid 업데이트
+      try {
+        db.prepare(`
+          UPDATE user 
+          SET isValid = 1, updatedAt = CURRENT_TIMESTAMP 
+          WHERE email = ?
+        `).run(email);
+        console.log(`[OTP] ✅ Updated Better Auth user table for ${email}`);
+      } catch (dbError) {
+        console.error(`[OTP] ❌ Failed to update Better Auth user table:`, dbError);
+      }
     }
 
     res.json({
