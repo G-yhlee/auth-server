@@ -38,7 +38,7 @@ app.use("/auth", router.authRouter);
 app.use("/api", router.infoUsersRouter);
 app.use("/api", router.infoNewsRouter);
 
-app.use("/api", router.usersRouter);
+app.use("", router.usersRouter);
 
 server.listen(port, () => {
   console.info(`listen at ${port}`);
